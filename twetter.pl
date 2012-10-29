@@ -18,7 +18,7 @@ use DateTime::Format::Twitter;
 use DeltaTime;
 
 my $interactive = 0;
-my $config_location = "/Users/mthorpe/.twitter_info";
+my $config_location = "~/.twitter_info";
 my $stream = 0;
 
 GetOptions (
