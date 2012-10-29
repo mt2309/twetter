@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+use v5.12;
+use lib 'lib';
+
 use strict;
 use warnings;
 use utf8;
@@ -9,6 +12,9 @@ use YAML::XS qw(LoadFile);
 use Carp;
 use Getopt::Long;
 use Term::ANSIColor;
+use DateTime;
+use DateTime::Format::Twitter;
+use DeltaTime;
 
 my $interactive = 0;
 my $config_location = "/Users/mthorpe/.twitter_info";
@@ -74,8 +80,10 @@ sub stream_tweets {
     eval {
         my $statuses = $twetter->friends_timeline({ count => 30 });
         for my $status (reverse @$statuses) {
-            my $date = 
-            print "$status->{created_at} $status->{user}{screen_name}> $status->{text}\n\n";
+            say $status->{created_at};
+            my $date = DateTime::Format::Twitter->parse_twitter_date($status->{created_at});
+            my $formatted_date = DeltaTime->datetime_to_delta($date);
+            print "$status->{user}{screen_name}> $status->{text}\n$formatted_date\n\n";
         }
     };
     if ( my $err = $@) {
