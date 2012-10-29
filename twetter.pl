@@ -80,7 +80,7 @@ sub stream_tweets {
     if ( my $err = $@) {
         print $err;
     }
-
+    sleep 20;
     print color("red"), "Starting new stream!\n", color("reset");
     stream_tweets();
 }
