@@ -16,17 +16,22 @@ use Term::ANSIColor;
 use DateTime;
 use DateTime::Format::Twitter;
 use DeltaTime;
+use Twet;
 use Pod::Usage;
 
-my $interactive = 0;
-my $config_location = $ENV{"HOME"} . "/.twitter_info";
-my $stream = 0;
+my ($interactive, $config_location, $help, $stream) = 0;
+$config_location = $ENV{"HOME"} . "/.twitter_info";
 
 GetOptions (
 	"interactive" => \$interactive,
     "config:s"    => \$config_location,
-    "stream"      => \$stream
+    "stream"      => \$stream,
+    "help"        => \$help
 	) or pod2usage(-verbose => 99, -sections => "OPTIONS");
+
+if ($help) {
+    pod2usage(-verbose => 3);
+}
 
 if ($interactive && $stream) {
     die pod2usage("Can't be interactive and stream at the same time");
@@ -42,40 +47,20 @@ my $twetter = Net::Twitter->new(
     access_token_secret => $config->{access_secret}
 );
 
-sub tweet($) {
-	my $twet = shift;
-    eval {
-        if (length $twet > 140) {
-            print "Twet was too long, was " . length $twet . " characters\n";
-        } 
-        else {
-            $twetter->update({ status => $twet });
-        }    
-    };
-    if ($@) {
-        print $@;
-    }
-	
-}
+my $tweeter = Twet->new(twetter => $twetter);
+
 
 if ($stream) {
     stream_tweets();
 }
 if (!$interactive and @ARGV > 0) {
     foreach my $tweet (@ARGV) {
-        tweet $tweet;
+        $tweeter->tweet($tweet);
         sleep 1;
     }
 }
 else {
-	streaming_tweet();
-}
-
-sub streaming_tweet {
-	while(<>) {
-        chomp $_;
-		tweet $_;
-	}
+	$tweeter->interactive();
 }
 
 sub stream_tweets {
