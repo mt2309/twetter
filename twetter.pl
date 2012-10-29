@@ -6,6 +6,7 @@ use lib 'lib';
 use strict;
 use warnings;
 use utf8;
+binmode STDOUT, ":utf8";
 
 use Net::Twitter;
 use YAML::XS qw(LoadFile);
@@ -79,9 +80,9 @@ sub streaming_tweet {
 sub stream_tweets {
     eval {
         my $statuses = $twetter->friends_timeline({ count => 30 });
+        my $dt = DateTime::Format::Twitter->new();
         for my $status (reverse @$statuses) {
-            say $status->{created_at};
-            my $date = DateTime::Format::Twitter->parse_twitter_date($status->{created_at});
+            my $date = $dt->parse_datetime($status->{created_at});
             my $formatted_date = DeltaTime->datetime_to_delta($date);
             print "$status->{user}{screen_name}> $status->{text}\n$formatted_date\n\n";
         }

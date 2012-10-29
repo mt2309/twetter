@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
+use Carp;
 use DateTime;
 
 my %months = (
@@ -24,8 +25,21 @@ my %months = (
     );
 
 
-sub parse_twitter_date {
+sub new {
+    my ($class, %opts) = @_;
+    return bless {}, ref($class)||$class;
+}
+
+sub clone {
+  my $self = shift;
+  croak('Calling object method as class method!') unless ref $self;
+  return $self->new();
+}
+
+sub parse_datetime {
     my ($self, $date) = @_;
+
+    $self = $self->new() if !ref($self);
 
     # Twitter dates are in this crazy format
     # Mon Oct 29 12:08:32 +0000 2012
@@ -40,7 +54,7 @@ sub parse_twitter_date {
     }
     # If it fails, return the current date.
     else {
-        return DateTime->now();
+        croak "Invalid Twitter date: $date";
     }
 }
 
