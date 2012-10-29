@@ -16,16 +16,17 @@ use Term::ANSIColor;
 use DateTime;
 use DateTime::Format::Twitter;
 use DeltaTime;
+use Pod::Usage;
 
 my $interactive = 0;
-my $config_location = "~/.twitter_info";
+my $config_location = $ENV{"HOME"} . "/.twitter_info";
 my $stream = 0;
 
 GetOptions (
 	"interactive" => \$interactive,
     "config:s"    => \$config_location,
     "stream"      => \$stream
-	);
+	) or pod2usage(-verbose => 99, -sections => "OPTIONS");
 
 if ($interactive && $stream) {
     die pod2usage("Can't be interactive and stream at the same time");
