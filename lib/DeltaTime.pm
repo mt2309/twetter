@@ -10,7 +10,7 @@ use DateTime;
 
 
 sub datetime_to_delta {
-    my ($self, $date) = @_;
+    my ($date) = @_;
 
     my $delta = time - ($date->epoch());
 

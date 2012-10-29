@@ -19,13 +19,14 @@ use DeltaTime;
 use Twet;
 use Pod::Usage;
 
-my ($interactive, $config_location, $help, $stream) = 0;
+my ($interactive, $config_location, $help, $stream, $all) = (0,0,0,0,0);
 $config_location = $ENV{"HOME"} . "/.twitter_info";
 
 GetOptions (
 	"interactive" => \$interactive,
     "config:s"    => \$config_location,
     "stream"      => \$stream,
+    "all"         => \$all,
     "help"        => \$help
 	) or pod2usage(-verbose => 99, -sections => "OPTIONS");
 
@@ -49,11 +50,11 @@ my $twetter = Net::Twitter->new(
 
 my $tweeter = Twet->new(twetter => $twetter);
 
-
 if ($stream) {
-    stream_tweets();
+    say "Streaming!";
+    $tweeter->stream_timeline($config,$all);
 }
-if (!$interactive and @ARGV > 0) {
+elsif (!$interactive and @ARGV > 0) {
     foreach my $tweet (@ARGV) {
         $tweeter->tweet($tweet);
         sleep 1;
@@ -61,24 +62,6 @@ if (!$interactive and @ARGV > 0) {
 }
 else {
 	$tweeter->interactive();
-}
-
-sub stream_tweets {
-    eval {
-        my $statuses = $twetter->friends_timeline({ count => 30 });
-        my $dt = DateTime::Format::Twitter->new();
-        for my $status (reverse @$statuses) {
-            my $date = $dt->parse_datetime($status->{created_at});
-            my $formatted_date = DeltaTime->datetime_to_delta($date);
-            print "$status->{user}{screen_name}> $status->{text}\n$formatted_date\n\n";
-        }
-    };
-    if ( my $err = $@) {
-        print $err;
-    }
-    sleep 20;
-    print color("red"), "Starting new stream!\n", color("reset");
-    stream_tweets();
 }
 
 =head1 NAME
