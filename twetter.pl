@@ -74,6 +74,7 @@ sub stream_tweets {
     eval {
         my $statuses = $twetter->friends_timeline({ count => 30 });
         for my $status (reverse @$statuses) {
+            my $date = 
             print "$status->{created_at} $status->{user}{screen_name}> $status->{text}\n\n";
         }
     };
@@ -84,3 +85,42 @@ sub stream_tweets {
     print color("red"), "Starting new stream!\n", color("reset");
     stream_tweets();
 }
+
+=head1 NAME
+
+Twetter - a command line client for Twitter
+
+=head1 DESCRIPTION
+
+I wasn't happy with any of the current Twitter command line clients, so I wrote my own.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--interactive>
+
+Allows you to write tweets as you want - reads from STDIN, a newline posts the tweet.
+
+eg: twetter --interactive < my_cool_tweets.txt
+
+=item B<--stream>
+
+Fetches the last 30 tweets on your timeline
+
+=item B<ARGV>
+
+Passing a list of escaped strings one after the other will tweet them
+
+eg: twetter 'this is one tweet' 'this is another'
+
+=back
+
+=head1 CAVEATS
+
+Currently uses a quite bad method of authentication - everything is hardcoded for my own profile and Twitter account.
+
+=head1 AUTHOR
+
+Michael Thorpe <mt2309@ic.ac.uk>
+
