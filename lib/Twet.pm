@@ -82,7 +82,7 @@ sub split_tweet {
         $length += length $word;
         if ($length > 140) {
             say "Tweeting: $tweet";
-            #$self->tweet($tweet);
+            $self->tweet($tweet);
             $length = 0;
             $tweet = $word;
         }
@@ -91,7 +91,7 @@ sub split_tweet {
         }
     }
     say "Tweeting: $tweet";
-    #$self->tweet($tweet);
+    $self->tweet($tweet);
 }
 
 sub stream_timeline {
