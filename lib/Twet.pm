@@ -63,7 +63,35 @@ sub interactive {
         $self->tweet($_);
         print color("magenta"), $self->formatted_count(), color("reset");
     }
+}
 
+sub split_tweet {
+    my ($self) = @_;
+
+    # Grab all of stdin into a single string
+    my $string_to_tweet = join("\n",<>);
+    # Split on whitespace
+    my @array_to_tweet = split(/\s/,$string_to_tweet);
+
+    my $length = 0;
+    my $tweet = "";
+
+    # Vaguely hacky manner of doing this.
+    # I think there's a case in which this would double tweet.
+    foreach my $word (@array_to_tweet) {
+        $length += length $word;
+        if ($length > 140) {
+            say "Tweeting: $tweet";
+            #$self->tweet($tweet);
+            $length = 0;
+            $tweet = $word;
+        }
+        else {
+            $tweet = $tweet . " " . $word;
+        }
+    }
+    say "Tweeting: $tweet";
+    #$self->tweet($tweet);
 }
 
 sub stream_timeline {

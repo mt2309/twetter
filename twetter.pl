@@ -19,13 +19,14 @@ use DeltaTime;
 use Twet;
 use Pod::Usage;
 
-my ($interactive, $config_location, $help, $stream, $all) = (0,0,0,0,0);
+my ($interactive, $stream, $split_tweet, $config_location, $help, $all) = (0,0,0,0,0,0);
 $config_location = $ENV{"HOME"} . "/.twitter_info";
 
 GetOptions (
 	"interactive" => \$interactive,
-    "config:s"    => \$config_location,
     "stream"      => \$stream,
+    "split"       => \$split_tweet,
+    "config:s"    => \$config_location,
     "all"         => \$all,
     "help"        => \$help
 	) or pod2usage(-verbose => 99, -sections => "OPTIONS");
@@ -53,6 +54,10 @@ my $tweeter = Twet->new(twetter => $twetter);
 if ($stream) {
     say "Streaming!";
     $tweeter->stream_timeline($config,$all);
+}
+if ($split_tweet) {
+    say "Splitting the tweets";
+    $tweeter->split_tweet();
 }
 elsif (!$interactive and @ARGV > 0) {
     foreach my $tweet (@ARGV) {
