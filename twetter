@@ -6,6 +6,7 @@ use lib 'lib';
 use strict;
 use warnings;
 use utf8;
+# Need to output in utf8 since people have crazy characters in their names/tweets
 binmode STDOUT, ":utf8";
 
 use Net::Twitter;
@@ -19,7 +20,7 @@ use DeltaTime;
 use Twet;
 use Pod::Usage;
 
-my ($interactive, $stream, $split_tweet, $config_location, $help, $all) = (0,0,0,0,0,0);
+my ($interactive, $stream, $split_tweet, $config_location, $help) = (0,0,0,0,0);
 $config_location = $ENV{"HOME"} . "/.twitter_info";
 
 GetOptions (
@@ -27,15 +28,14 @@ GetOptions (
     "stream"      => \$stream,
     "split"       => \$split_tweet,
     "config:s"    => \$config_location,
-    "all"         => \$all,
     "help"        => \$help
 	) or pod2usage(-verbose => 99, -sections => "OPTIONS");
 
 if ($help) {
     pod2usage(-verbose => 3);
+    exit;
 }
-
-if ($interactive && $stream) {
+elsif ($interactive && $stream) {
     die pod2usage("Can't be interactive and stream at the same time");
 }
 
@@ -53,9 +53,9 @@ my $tweeter = Twet->new(twetter => $twetter);
 
 if ($stream) {
     say "Streaming!";
-    $tweeter->stream_timeline($config,$all);
+    $tweeter->stream_timeline($config);
 }
-if ($split_tweet) {
+elsif ($split_tweet) {
     say "Splitting the tweets";
     $tweeter->split_tweet();
 }

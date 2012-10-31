@@ -20,7 +20,7 @@ has 'tweet_count' => (
 has 'format_length' => (
     is => 'ro',
     isa => 'Int',
-    default => 6,
+    default => 3,
 );
 
 has 'datetime_parser' => (
@@ -95,7 +95,7 @@ sub split_tweet {
 }
 
 sub stream_timeline {
-    my ($self, $config, $all_replies) = @_;
+    my ($self, $config) = @_;
 
     my $cv = AE::cv;
 
