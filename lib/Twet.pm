@@ -83,7 +83,7 @@ sub split_tweet {
         if ($length > 140) {
             say "Tweeting: $tweet";
             $self->tweet($tweet);
-            $length = 0;
+            $length = length $word;
             $tweet = $word;
         }
         else {
