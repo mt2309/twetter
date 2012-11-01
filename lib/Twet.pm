@@ -90,8 +90,10 @@ sub split_tweet {
             $tweet = $tweet . " " . $word;
         }
     }
-    say "Tweeting: $tweet";
-    $self->tweet($tweet);
+    if ($tweet ne "") {
+        say "Tweeting: $tweet";
+        $self->tweet($tweet);
+    }
 }
 
 sub stream_timeline {
