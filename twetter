@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
-use v5.12;
+use v5.14;
 
 use lib '/Users/mthorpe/programming/lib';
 
@@ -21,10 +21,11 @@ use DeltaTime;
 use Twet;
 use Pod::Usage;
 
-my ($interactive, $stream, $split_tweet, $config_location, $help) = (0,0,0,0,0);
+my ($interactive, $stream, $split_tweet, $config_location, $help, $ui) = (0,0,0,0,0,0);
 $config_location = $ENV{"HOME"} . "/.twitter_info";
 
 GetOptions (
+    "ui"          => \$ui,
 	"interactive" => \$interactive,
     "stream"      => \$stream,
     "split"       => \$split_tweet,

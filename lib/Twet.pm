@@ -7,6 +7,9 @@ use utf8;
 use AnyEvent;
 use AnyEvent::Twitter::Stream;
 use Data::Dumper;
+use URI::Find;
+use Term::ReadLine;
+
 binmode STDOUT, ":utf8";
 
 use Term::ANSIColor;
@@ -32,18 +35,23 @@ has 'datetime_parser' => (
 has 'twetter' => (
     is => 'ro',
     isa => 'Net::Twitter',
-    required => 1,
+    required => 0
     );
 
 sub tweet {
     my ($self,$twet) = @_;
+
+    my $length = 0;
+    my $finder = URI::Find->new(sub {$length += length shift;});
+    my $how_many = $finder->find(\$twet);
+
     eval {
-        if (length $twet > 140) {
+        if (((length $twet) - $length + ($how_many * 13)) > 140) {
             print "Tweet was too long, was " . length $twet . " characters\n";
-        } 
+        }
         else {
             $self->twetter->update({ status => $twet });
-        }    
+        }
     };
     if ($@) {
         print $@;
@@ -56,12 +64,11 @@ sub tweet {
 sub interactive {
     my ($self) = @_;
 
-    print color("magenta"), $self->formatted_count(), color("reset");
+    my $term = new Term::ReadLine 'Twet';
 
-    while(<>) {
+    while(defined ($_ = $term->readline($self->formatted_count()))) {
         chomp $_;
         $self->tweet($_);
-        print color("magenta"), $self->formatted_count(), color("reset");
     }
 }
 
@@ -109,7 +116,7 @@ sub stream_timeline {
         token               => $config->{access_token},
         token_secret        => $config->{access_secret},
         method              => "userstream",
-        on_tweet            => sub { 
+        on_tweet            => sub {
             my $tweet = shift; $self->stream_tweet($tweet);
         },
         timeout             => 60,
