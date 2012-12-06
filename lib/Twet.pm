@@ -44,7 +44,7 @@ sub tweet {
     my $length = 0;
     my $finder = URI::Find->new(sub {$length += length shift;});
     my $how_many = $finder->find(\$twet);
-
+    print "Found $how_many links\n";
     eval {
         if (((length $twet) - $length + ($how_many * 13)) > 140) {
             print "Tweet was too long, was " . length $twet . " characters\n";
@@ -69,6 +69,19 @@ sub interactive {
     while(defined ($_ = $term->readline($self->formatted_count()))) {
         chomp $_;
         $self->tweet($_);
+    }
+}
+
+sub mentions {
+    my ($self) = @_;
+
+    my $results = $self->twetter->mentions();
+
+    foreach my $mention (reverse @$results) {
+
+        $self->stream_tweet($mention);
+        print color 'red'; print "In reply to:\t"; print color 'reset';
+        $self->stream_tweet($self->twetter->show_status($mention->{in_reply_to_status_id}));
     }
 }
 
