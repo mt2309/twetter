@@ -43,7 +43,12 @@ my %commands = (
     '\rceil' => '⌉'
 );
 
-my $pat = join '|', map quotemeta, keys %commands;
+my @keys = sort { length($a) <=> length($b)
+                               or
+                            $a cmp $b
+                  } keys %commands;
+
+my $pat = join '|', map quotemeta, reverse @keys;
 my $regex = qr/$pat/;
 
 sub format_string {
