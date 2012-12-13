@@ -11,7 +11,6 @@ Things it currently supports
 * LaTeX!
 * Getting mentions
 * Reading tweets from stdin
-* Piping input in and tweeting it
 * streaming your timeline
 
 Setup
