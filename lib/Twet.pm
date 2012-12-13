@@ -9,10 +9,12 @@ use AnyEvent::Twitter::Stream;
 use Data::Dumper;
 use URI::Find;
 use Term::ReadLine;
+use Term::ANSIColor;
+
+use Twet::Latex;
 
 binmode STDOUT, ":utf8";
 
-use Term::ANSIColor;
 
 has 'tweet_count' => (
     is => 'rw',
@@ -45,16 +47,19 @@ sub tweet {
     my $finder = URI::Find->new(sub {$length += length shift;});
     my $how_many = $finder->find(\$twet);
     print "Found $how_many links\n";
+
+    my $to_tweet = Twet::Latex::format_string($twet);
+
     eval {
-        if (((length $twet) - $length + ($how_many * 13)) > 140) {
-            print "Tweet was too long, was " . length $twet . " characters\n";
+        if (((length $to_tweet) - $length + ($how_many * 13)) > 140) {
+            print "Tweet was too long, was " . length $to_tweet . " characters\n";
         }
         else {
-            $self->twetter->update({ status => $twet });
+            $self->twetter->update({ status => $to_tweet });
         }
     };
     if ($@) {
-        print $@;
+        say $@;
     }
     else {
         $self->tweet_count($self->tweet_count + 1)
