@@ -20,9 +20,9 @@ Setup
 Needs an OAUTH set up, then add a config
 file at ~/.twitter_info with:
 
-  consumer_key:
-  consumer_secret:
-  access_token:
-  access_secret:
+consumer_key:
+consumer_secret:
+access_token:
+access_secret:
 
 with the fields completed.
